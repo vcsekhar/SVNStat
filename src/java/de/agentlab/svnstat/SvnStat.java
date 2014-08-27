@@ -14,6 +14,7 @@
  * 02111-1307 USA
  * 
  */
+
 package de.agentlab.svnstat;
 
 import java.io.FileInputStream;
@@ -36,239 +37,234 @@ import org.jdom.xpath.XPath;
 
 public class SvnStat {
 
-  private String repository;
-  private String outdir;
-  private String beginDate = null;
-  private String endDate   = null;
+    private String repository;
+    private String outdir;
+    private String beginDate = null;
+    private String endDate   = null;
 
-  public boolean init(CLI cli) {
-    String configfile = cli.getStringOption("config");
-    PropertyResourceBundle config;
-    try {
-      if (configfile != null) {
-        config = new PropertyResourceBundle(new FileInputStream(configfile));
-
-      } else {
-        config = new PropertyResourceBundle(Graph.class.getResourceAsStream("SvnStat.properties"));
-      }
-      Config.init(config);
-      Graph.parseConfig();
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-
-    this.repository = cli.getStringOption("r");
-    if (this.repository == null) {
-      System.out.println("Repository or logfie (-r option) must be provided!");
-      return false;
-    }
-
-    this.outdir = cli.getStringOption("d", "svnstat");
-
-    this.beginDate = cli.getStringOption("begin");
-    this.endDate = cli.getStringOption("end");
-
-    return true;
-  }
-
-  public void run() throws FileNotFoundException {
-    InputStream in;
-    if (this.repository.startsWith("http")) {
-      in = this.getSvnLog(this.repository);
-    } else {
-      in = new FileInputStream(this.repository);
-    }
-
-    Stat stat = new Stat();
-
-    try {
-      this.readXml(in, stat);
-
-      Collections.reverse(stat.getDates());
-
-      stat.setDir(outdir);
-      stat.setRepository(repository);
-            
-      stat.fileCount(beginDate, endDate);
-
-      stat.commitsPercentage(beginDate, endDate);
-
-      stat.commitsAllUsers(beginDate, endDate);
-
-      for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
-        String user = (String) i.next();
-
-        stat.commitsPerUser(beginDate, endDate, user);
-
-        stat.changesPerUser(beginDate, endDate, user);
-
-        stat.commitTimesPerUser(beginDate, endDate, user);
-
-        stat.modulesPerUser(beginDate, endDate, user);
-      }
-      
-      stat.moduleActivityPerUser();
-      stat.moduleActivityPerUserPerDate();
-      stat.commitsTotal(beginDate, endDate);
-
-      this.writeIndexFile(stat);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void readXml(InputStream in, Stat stat) throws IOException {
-    SAXBuilder builder = new SAXBuilder();
-    try {
-      Document document = builder.build(in);
-      for (Iterator i = document.getRootElement().getContent().iterator(); i.hasNext();) {
-        Content logentry = (Content) i.next();
-        if (logentry instanceof Element) {
-          String authorStr;
-
-          Element authorNode = ((Element) logentry).getChild("author");
-          if (authorNode != null) {
-            authorStr = authorNode.getValue();
-          } else {
-            authorStr = "unknown";
-          }
-          String user;
-          if (authorStr.indexOf("=") != -1) {
-            user = authorStr.substring(authorStr.indexOf("=") + 1, authorStr.indexOf(",")).trim();
-          } else {
-            user = authorStr.trim();
-          }
-
-          String dateStr = ((Element) logentry).getChild("date").getValue();
-
-          int index = dateStr.trim().indexOf("T");
-          String date = dateStr.trim().substring(0, index);
-          String time = dateStr.trim().substring(index + 1, index + 9);
-
-          SvnRecord record = new SvnRecord();
-
-          List nodes = XPath.selectNodes(logentry, "paths/path[@action='A']");
-          for (Iterator j = nodes.iterator(); j.hasNext();) {
-            Element element = (Element) j.next();
-            record.addFile(element.getValue());
-          }
-          int added = nodes.size();
-
-          nodes = XPath.selectNodes(logentry, "paths/path[@action='M']");
-          for (Iterator j = nodes.iterator(); j.hasNext();) {
-            Element element = (Element) j.next();
-            record.addFile(element.getValue());
-          }
-          int modified = nodes.size();
-
-          nodes = XPath.selectNodes(logentry, "paths/path[@action='D']");
-          for (Iterator j = nodes.iterator(); j.hasNext();) {
-            Element element = (Element) j.next();
-            record.addFile(element.getValue());
-          }
-          int deleted = nodes.size();
-
-          record.setDate(date);
-          record.setTime(time);
-          record.setUser(user.toLowerCase());
-          record.setAdded(added);
-          record.setModified(modified);
-          record.setDeleted(deleted);
-          stat.addRecord(record);
-
+    public boolean init(CLI cli) {
+        String configfile = cli.getStringOption("config");
+        PropertyResourceBundle config;
+        try {
+            if (configfile != null) {
+                config = new PropertyResourceBundle(new FileInputStream(configfile));
+            } else {
+                config = new PropertyResourceBundle(Graph.class.getResourceAsStream("SvnStat.properties"));
+            }
+            Config.init(config);
+            Graph.parseConfig();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
-  public InputStream getSvnLog(String url) {
-    try {
-      String cmd = "svn log --verbose --xml " + url;
-      Process p = Runtime.getRuntime().exec(cmd);
+        this.repository = cli.getStringOption("r");
+        if (this.repository == null) {
+            System.out.println("Repository or logfie (-r option) must be provided!");
+            return false;
+        }
 
-      return p.getInputStream();
+        this.outdir = cli.getStringOption("d", "svnstat");
 
-    } catch (IOException e) {
-      e.printStackTrace();
+        this.beginDate = cli.getStringOption("begin");
+        this.endDate = cli.getStringOption("end");
+
+        return true;
     }
 
-    return null;
-  }
+    public void run() throws FileNotFoundException {
+        InputStream in;
+        if (this.repository.startsWith("http")) {
+            in = this.getSvnLog(this.repository);
+        } else {
+            in = new FileInputStream(this.repository);
+        }
 
-  public void writeIndexFile(Stat stat) {
-    String content = "";
+        Stat stat = new Stat();
 
-    content += "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\">";
-    content += "<html>";
-    content += "<head>";
-    content += "<title>SVNstat</title>";
-    content += "</head>";
+        try {
+            this.readXml(in, stat);
 
-    content += "<body>";
-    content += "<h2>" + Config.getProperty("Report.headline") + "</h2>";
+            Collections.reverse(stat.getDates());
 
-    content += "<img src=\"Total_commits.jpg\">";
-    content += "<img src=\"File_Count.jpg\">";
+            stat.setDir(outdir);
+            stat.setRepository(repository);
 
-    content += "<br>";
-    content += "<img src=\"AllUsers_commits.jpg\">";
-    content += "<img src=\"Commit_Percentage.jpg\">";
+            stat.fileCount(beginDate, endDate);
 
-    for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
-      String user = (String) i.next();
+            stat.commitsPercentage(beginDate, endDate);
 
-      content += "<h2>" + user + "</h2>";
-      content += "<img src=\"" + user + "_commits.jpg\">";
-      content += "<img src=\"" + user + "_changes.jpg\">";
-      content += "<img src=\"" + user + "_commitTimes.jpg\">";
+            stat.commitsAllUsers(beginDate, endDate);
+
+            for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
+                String user = (String) i.next();
+
+                stat.commitsPerUser(beginDate, endDate, user);
+
+                stat.changesPerUser(beginDate, endDate, user);
+
+                stat.commitTimesPerUser(beginDate, endDate, user);
+
+                stat.modulesPerUser(beginDate, endDate, user);
+            }
+
+            stat.moduleActivityPerUser();
+            stat.moduleActivityPerUserPerDate();
+            stat.commitsTotal(beginDate, endDate);
+
+            this.writeIndexFile(stat);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    content += "</body>";
-    content += "</html>";
+    private void readXml(InputStream in, Stat stat) throws IOException {
+        SAXBuilder builder = new SAXBuilder();
+        try {
+            Document document = builder.build(in);
+            for (Iterator i = document.getRootElement().getContent().iterator(); i.hasNext();) {
+                Content logentry = (Content) i.next();
+                if (logentry instanceof Element) {
+                    String authorStr;
 
-    try {
-      PrintWriter p = new PrintWriter(new FileOutputStream(stat.getDir() + "/index.html"));
-      p.println(content);
-      p.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+                    Element authorNode = ((Element) logentry).getChild("author");
+                    if (authorNode != null) {
+                        authorStr = authorNode.getValue();
+                    } else {
+                        authorStr = "unknown";
+                    }
+                    String user;
+                    if (authorStr.indexOf("=") != -1) {
+                        user = authorStr.substring(authorStr.indexOf("=") + 1, authorStr.indexOf(",")).trim();
+                    } else {
+                      user = authorStr.trim();
+                    }
+
+                    String dateStr = ((Element) logentry).getChild("date").getValue();
+
+                    int index = dateStr.trim().indexOf("T");
+                    String date = dateStr.trim().substring(0, index);
+                    String time = dateStr.trim().substring(index + 1, index + 9);
+
+                    SvnRecord record = new SvnRecord();
+
+                    List nodes = XPath.selectNodes(logentry, "paths/path[@action='A']");
+                    for (Iterator j = nodes.iterator(); j.hasNext();) {
+                        Element element = (Element) j.next();
+                        record.addFile(element.getValue());
+                    }
+                    int added = nodes.size();
+
+                    nodes = XPath.selectNodes(logentry, "paths/path[@action='M']");
+                    for (Iterator j = nodes.iterator(); j.hasNext();) {
+                        Element element = (Element) j.next();
+                        record.addFile(element.getValue());
+                    }
+                    int modified = nodes.size();
+
+                    nodes = XPath.selectNodes(logentry, "paths/path[@action='D']");
+                    for (Iterator j = nodes.iterator(); j.hasNext();) {
+                        Element element = (Element) j.next();
+                        record.addFile(element.getValue());
+                    }
+                    int deleted = nodes.size();
+
+                    record.setDate(date);
+                    record.setTime(time);
+                    record.setUser(user.toLowerCase());
+                    record.setAdded(added);
+                    record.setModified(modified);
+                    record.setDeleted(deleted);
+                    stat.addRecord(record);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-  }
+    public InputStream getSvnLog(String url) {
+        try {
+            String cmd = "svn log --verbose --xml " + url;
+            Process p = Runtime.getRuntime().exec(cmd);
 
-  public static void main(String[] args) {
+            return p.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    long start = System.currentTimeMillis();
-
-    if (args.length == 1 && args[0].equals("-help")) {
-      printUsage();
-      System.exit(0);
+        return null;
     }
-    CLI cli = new CLI();
-    cli.parseOptions(args);
 
-    SvnStat stat = new SvnStat();
+    public void writeIndexFile(Stat stat) {
+        String content = "";
 
-    try {
-      if (stat.init(cli)) {
-        stat.run();
-      } else {
-        printUsage();
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+        content += "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\">";
+        content += "<html>";
+        content += "<head>";
+        content += "<title>SVNstat</title>";
+        content += "</head>";
+
+        content += "<body>";
+        content += "<h2>" + Config.getProperty("Report.headline") + "</h2>";
+
+        content += "<img src=\"Total_commits.jpg\">";
+        content += "<img src=\"File_Count.jpg\">";
+
+        content += "<br>";
+        content += "<img src=\"AllUsers_commits.jpg\">";
+        content += "<img src=\"Commit_Percentage.jpg\">";
+
+        for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
+            String user = (String) i.next();
+
+            content += "<h2>" + user + "</h2>";
+            content += "<img src=\"" + user + "_commits.jpg\">";
+            content += "<img src=\"" + user + "_changes.jpg\">";
+            content += "<img src=\"" + user + "_commitTimes.jpg\">";
+        }
+
+        content += "</body>";
+        content += "</html>";
+
+        try {
+            PrintWriter p = new PrintWriter(new FileOutputStream(stat.getDir() + "/index.html"));
+            p.println(content);
+            p.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
-    System.out.println("Total time:" + (System.currentTimeMillis() - start));
 
-  }
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
 
-  private static void printUsage() {
-    System.out
-        .println("Usage: SvnStat -r <repository/logfile> [-d <outputDir>] [-config <configfile>] [-begin <date>] [-end <date>]");
-    System.out
-        .println("               (if using a logfile, the log must be retrieved using --verbose and --xml)");
-  }
+        if (args.length == 1 && args[0].equals("-help")) {
+            printUsage();
+            System.exit(0);
+        }
+        CLI cli = new CLI();
+        cli.parseOptions(args);
+
+        SvnStat stat = new SvnStat();
+
+        try {
+            if (stat.init(cli)) {
+                stat.run();
+            } else {
+                printUsage();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Total time:" + (System.currentTimeMillis() - start));
+    }
+
+    private static void printUsage() {
+        System.out
+            .println("Usage: SvnStat -r <repository/logfile> [-d <outputDir>] [-config <configfile>] [-begin <date>] [-end <date>]");
+        System.out
+            .println("               (if using a logfile, the log must be retrieved using --verbose and --xml)");
+    }
+
 }
