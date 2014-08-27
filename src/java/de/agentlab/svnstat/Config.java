@@ -14,6 +14,7 @@
  * 02111-1307 USA
  * 
  */
+
 package de.agentlab.svnstat;
 
 import java.util.Enumeration;
@@ -22,39 +23,40 @@ import java.util.PropertyResourceBundle;
 
 public class Config {
 
-  private static PropertyResourceBundle config;
+    private static PropertyResourceBundle config;
 
-  public static void init(PropertyResourceBundle config) {
-    Config.config = config;
-  }
-
-  public static String getProperty(String key) {
-    try {
-      return config.getString(key);
-    } catch (RuntimeException e) {
-      return "";
+    public static void init(PropertyResourceBundle config) {
+        Config.config = config;
     }
-  }
 
-  public static String getProperty(String key, String defaultValue) {
-    String result = config.getString(key);
-    if (result != null) {
-      return result;
-    } else {
-      return defaultValue;
+    public static String getProperty(String key) {
+        try {
+            return config.getString(key);
+        } catch (RuntimeException e) {
+            return "";
+        }
     }
-  }
 
-  public static int getIntProperty(String key, int defaultValue) {
-    String result = config.getString(key);
-    if (result != null) {
-      return Integer.parseInt(result);
-    } else {
-      return defaultValue;
+    public static String getProperty(String key, String defaultValue) {
+        String result = config.getString(key);
+        if (result != null) {
+            return result;
+        } else {
+            return defaultValue;
+        }
     }
-  }
 
-  public static Enumeration getKeys() {
-    return config.getKeys();
-  }
+    public static int getIntProperty(String key, int defaultValue) {
+        String result = config.getString(key);
+        if (result != null) {
+            return Integer.parseInt(result);
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public static Enumeration getKeys() {
+        return config.getKeys();
+    }
+
 }

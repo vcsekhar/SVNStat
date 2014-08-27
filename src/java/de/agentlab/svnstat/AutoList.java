@@ -14,6 +14,7 @@
  * 02111-1307 USA
  * 
  */
+
 package de.agentlab.svnstat;
 
 import java.util.ArrayList;
@@ -21,22 +22,23 @@ import java.util.ArrayList;
 
 public class AutoList extends ArrayList {
 
-  public Object get(int index) {
-    Object result = null;
-    try {
-      result = super.get(index);
-    } catch (IndexOutOfBoundsException e) {
-      for (int i = super.size(); i <= index; i++) {
-        super.add(new Object());
-      }
+    public Object get(int index) {
+        Object result = null;
+        try {
+            result = super.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            for (int i = super.size(); i <= index; i++) {
+                super.add(new Object());
+            }
 
-      result = super.get(index);
+            result = super.get(index);
+        }
+        return result;
     }
-    return result;
-  }
 
-  public Object set(int index, Object element) {
-    this.get(index);
-    return super.set(index, element);
-  }
+    public Object set(int index, Object element) {
+        this.get(index);
+        return super.set(index, element);
+    }
+
 }
