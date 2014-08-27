@@ -14,76 +14,77 @@
  * 02111-1307 USA
  * 
  */
+
 package de.agentlab.svnstat;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SvnRecord {
 
-  private String date;
-  private String time;
-  private String user;
-  private int    added;
-  private int    modified;
-  private int    deleted;
-  private List   files = new ArrayList();
+    private String date;
+    private String time;
+    private String user;
+    private int    added;
+    private int    modified;
+    private int    deleted;
+    private List   files = new ArrayList();
 
-  public String getDate() {
-    return this.date;
-  }
+    public String getDate() {
+        return this.date;
+    }
 
-  public void setDate(String date) {
-    this.date = date;
-  }
+    public void setDate(String date) {
+        this.date = date;
+    }
 
-  public String getTime() {
-    return this.time;
-  }
+    public String getTime() {
+        return this.time;
+    }
 
-  public void setTime(String time) {
-    this.time = time;
-  }
+    public void setTime(String time) {
+        this.time = time;
+    }
 
-  public String getUser() {
-    return this.user;
-  }
+    public String getUser() {
+        return this.user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public int getAdded() {
-    return this.added;
-  }
+    public int getAdded() {
+        return this.added;
+    }
 
-  public void setAdded(int added) {
-    this.added = added;
-  }
+    public void setAdded(int added) {
+        this.added = added;
+    }
 
-  public int getDeleted() {
-    return this.deleted;
-  }
+    public int getDeleted() {
+        return this.deleted;
+    }
 
-  public void setDeleted(int deleted) {
-    this.deleted = deleted;
-  }
+    public void setDeleted(int deleted) {
+        this.deleted = deleted;
+    }
 
-  public int getModified() {
-    return this.modified;
-  }
+    public int getModified() {
+        return this.modified;
+    }
 
-  public void setModified(int modified) {
-    this.modified = modified;
-  }
-  
-  public void addFile(String filename){
-    this.files.add(filename);
-  }
-  
-  public List getFiles() {
-    return this.files;
-  }
+    public void setModified(int modified) {
+        this.modified = modified;
+    }
 
-  
+    public void addFile(String filename){
+        this.files.add(filename);
+    }
+
+    public List getFiles() {
+        return this.files;
+    }
+
 }

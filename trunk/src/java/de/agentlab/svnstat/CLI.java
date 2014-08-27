@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2006 Juergen Lind, jli@agentlab.de
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
@@ -14,6 +14,7 @@
  * 02111-1307 USA
  * 
  */
+
 package de.agentlab.svnstat;
 
 import java.util.HashMap;
@@ -26,130 +27,131 @@ import java.util.HashMap;
  * @version $Id: CLI.java,v 1.2 2006/06/17 20:46:32 jli Exp $
  */
 public class CLI {
-  private HashMap options;
 
-  public CLI() {
-    this.options = new HashMap();
-  }
+    private HashMap options;
 
-  /**
-   * Parse the vector of command line arguments into options and store these options in a HashMap. A
-   * command line option must start with a dash ("-") and may have an argument (which must not start
-   * with a dash). Options without arguments are considered boolean. Note that it is not possible to
-   * provide a list of non-option arguments.
-   * 
-   * @param argv the vectore of command line arguments
-   */
-  public void parseOptions(String[] argv) {
-    int i = 0;
+    public CLI() {
+        this.options = new HashMap();
+    }
 
-    while (i < argv.length) {
-      String arg = argv[i++];
+    /**
+     * Parse the vector of command line arguments into options and store these options in a HashMap. A
+     * command line option must start with a dash ("-") and may have an argument (which must not start
+     * with a dash). Options without arguments are considered boolean. Note that it is not possible to
+     * provide a list of non-option arguments.
+     * 
+     * @param argv the vectore of command line arguments
+     */
+    public void parseOptions(String[] argv) {
+        int i = 0;
 
-      if (arg.startsWith("-")) {
-        if (i != argv.length) {
-          // there may be an argument to this option
-          String value = argv[i];
+        while (i < argv.length) {
+            String arg = argv[i++];
 
-          if (!value.startsWith("-")) {
-            // argument
-            this.options.put(arg.substring(1), value);
-            i++;
-          } else {
-            // no argument
-            this.options.put(arg.substring(1), new Boolean(true));
-          }
-        } else {
-          // this is the last option, there cannot be an argument
-          this.options.put(arg.substring(1), new Boolean(true));
+            if (arg.startsWith("-")) {
+                if (i != argv.length) {
+                    // there may be an argument to this option
+                    String value = argv[i];
+
+                    if (!value.startsWith("-")) {
+                        // argument
+                        this.options.put(arg.substring(1), value);
+                        i++;
+                    } else {
+                        // no argument
+                        this.options.put(arg.substring(1), new Boolean(true));
+                    }
+                } else {
+                    // this is the last option, there cannot be an argument
+                    this.options.put(arg.substring(1), new Boolean(true));
+                }
+            }
         }
-      }
     }
-  }
 
-  /**
-   * Return the options HashMap.
-   * 
-   * @return the options HashMap
-   */
-  public HashMap getOptions() {
-    return this.options;
-  }
-
-  /**
-   * Returns an option value as String.
-   * 
-   * @param name the name of the option
-   * 
-   * @return the option value as String or <code>null</code> if the option is not provided by the
-   *         user.
-   */
-  public String getStringOption(String name) {
-    return (String) this.options.get(name);
-  }
-
-  public String getStringOption(String name, String defaultValue) {
-    String result = (String) this.options.get(name);
-
-    if (result != null) {
-      return result;
-    } else {
-      return defaultValue;
+    /**
+     * Return the options HashMap.
+     * 
+     * @return the options HashMap
+     */
+    public HashMap getOptions() {
+        return this.options;
     }
-  }
 
-  /**
-   * Returns an option value as boolean value.
-   * 
-   * @param name the name of the option
-   * 
-   * @return <code>true</code> if the option is provided, <code>false</code> otherwise
-   */
-  public boolean getBooleanOption(String name) {
-    Boolean value = ((Boolean) this.options.get(name));
-
-    if (value != null) {
-      return value.booleanValue();
-    } else {
-      return false;
+    /**
+     * Returns an option value as String.
+     * 
+     * @param name the name of the option
+     * 
+     * @return the option value as String or <code>null</code> if the option is not provided by the
+     *         user.
+     */
+    public String getStringOption(String name) {
+        return (String) this.options.get(name);
     }
-  }
 
-  /**
-   * Returns an option value as boolean value.
-   * 
-   * @param name the name of the option
-   * 
-   * @return <code>true</code> if the option is provided, <code>false</code> otherwise
-   */
-  public boolean getBooleanOption(String name, boolean defaultValue) {
-    Boolean value = ((Boolean) this.options.get(name));
+    public String getStringOption(String name, String defaultValue) {
+        String result = (String) this.options.get(name);
 
-    if (value != null) {
-      return value.booleanValue();
-    } else {
-      return defaultValue;
+        if (result != null) {
+            return result;
+        } else {
+            return defaultValue;
+        }
     }
-  }
 
-  public double getDoubleOption(String name, double defaultValue) {
-    String result = (String) this.options.get(name);
+    /**
+     * Returns an option value as boolean value.
+     * 
+     * @param name the name of the option
+     * 
+     * @return <code>true</code> if the option is provided, <code>false</code> otherwise
+     */
+    public boolean getBooleanOption(String name) {
+        Boolean value = ((Boolean) this.options.get(name));
 
-    if (result != null) {
-      return Double.parseDouble(result);
-    } else {
-      return defaultValue;
+        if (value != null) {
+            return value.booleanValue();
+        } else {
+            return false;
+        }
     }
-  }
 
-  public int getIntOption(String name, int defaultValue) {
-    String result = (String) this.options.get(name);
+    /**
+     * Returns an option value as boolean value.
+     * 
+     * @param name the name of the option
+     * 
+     * @return <code>true</code> if the option is provided, <code>false</code> otherwise
+     */
+    public boolean getBooleanOption(String name, boolean defaultValue) {
+        Boolean value = ((Boolean) this.options.get(name));
 
-    if (result != null) {
-      return Integer.parseInt(result);
-    } else {
-      return defaultValue;
+        if (value != null) {
+            return value.booleanValue();
+        } else {
+            return defaultValue;
+        }
     }
-  }
+
+    public double getDoubleOption(String name, double defaultValue) {
+        String result = (String) this.options.get(name);
+
+        if (result != null) {
+            return Double.parseDouble(result);
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public int getIntOption(String name, int defaultValue) {
+        String result = (String) this.options.get(name);
+
+        if (result != null) {
+            return Integer.parseInt(result);
+        } else {
+            return defaultValue;
+        }
+    }
 
 }
