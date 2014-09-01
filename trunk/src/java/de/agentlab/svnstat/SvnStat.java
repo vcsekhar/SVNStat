@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Juergen Lind, jli@agentlab.de
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -87,10 +87,16 @@ public class SvnStat {
 
             Collections.reverse(stat.getDates());
 
-            stat.setDir(outdir);
             stat.setRepository(repository);
 
-            stat.fileCount(beginDate, endDate);
+            boolean hasFiles = stat.fileCount(beginDate, endDate);
+
+            if (!hasFiles) {
+                System.out.println("No commits to analyze.");
+                return;
+            }
+
+            stat.setDir(outdir);
 
             stat.commitsPercentage(beginDate, endDate);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Juergen Lind, jli@agentlab.de
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -386,9 +386,11 @@ public class Stat {
         }
     }
 
-    public void fileCount(String from, String to) {
-    //public void fileCount(String from, String to) {
+    public boolean fileCount(String from, String to) {
         List selectedDates = this.filterDates(from, to);
+
+        if (selectedDates.isEmpty())
+            return false;
 
         String[] xAxisLabels = new String[selectedDates.size()];
 
@@ -397,20 +399,22 @@ public class Stat {
         int base = 0;
 
         if (from != null) {
-            // Compute number of files up to selected start date
+            // Compute the number of files up to selected start date.
             for (Iterator i = this.filterDates("0000-00-00", from).iterator(); i.hasNext();) {
                 String date = (String) i.next();
 
                 if (i.hasNext()) {
-                    // omit last date
+                    // Omit the last date.
                     base += getFileCount(date);
                 }
             }
         }
         int sum = base;
         int index = 0;
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) { // TBD
-            //for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
+        List filteredDates = this.filterDates(from, to);
+        if (filteredDates.isEmpty())
+            return false;
+        for (Iterator i = filteredDates.iterator(); i.hasNext();) {
             String date = (String) i.next();
 
             sum += getFileCount(date);
@@ -422,7 +426,11 @@ public class Stat {
         long minValue = Math.round(StatUtils.min(data[0]));
         long maxValue = Math.round(StatUtils.max(data[0]));
 
-        long diff = maxValue-minValue;
+        long diff = maxValue - minValue;
+
+        // Avoid a org.jCharts.properties.PropertyException in Graph.lineChart when diff == 0.
+        if (diff == 0)
+            return false;
 
         try {
             String[] legendLabels = new String[] { Config.getProperty("FileCount.yLabel") };
@@ -433,7 +441,10 @@ public class Stat {
                 + this.repository, legendLabels, data, minValue, diff / 4, this.dir + "File_Count.jpg"); // TBD: preempting an exception when diff == 0
         } catch (Exception e) {
             e.printStackTrace();
+            return true;
         }
+
+        return true;
     }
 
     public void modulesPerUser(String from, String to, String user) {
