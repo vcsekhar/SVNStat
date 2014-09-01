@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2006 Juergen Lind, jli@agentlab.de
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
