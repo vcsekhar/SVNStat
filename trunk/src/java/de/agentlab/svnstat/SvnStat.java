@@ -111,6 +111,8 @@ public class SvnStat {
 
                 stat.commitTimesPerUser(beginDate, endDate, user);
 
+                stat.commitDaysPerUser(beginDate, endDate, user);
+
                 stat.modulesPerUser(beginDate, endDate, user);
             }
 
@@ -228,6 +230,7 @@ public class SvnStat {
             content += "<img src=\"" + user + "_commits.jpg\">";
             content += "<img src=\"" + user + "_changes.jpg\">";
             content += "<img src=\"" + user + "_commitTimes.jpg\">";
+            content += "<img src=\"" + user + "_commitDays.jpg\">";
         }
 
         content += "</body>";

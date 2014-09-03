@@ -1,5 +1,5 @@
 /*
- * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
+ * Copyright © 2006, 2014 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -21,7 +21,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -176,11 +179,16 @@ public class Stat {
             legendLabels = new String[] { user };
             filename = user + "_commits.jpg";
 
-            new Graph().stackedBarChart(Config.getIntProperty("CommitsPerUser.width", 850), Config
-                .getIntProperty("CommitsPerUser.height", 360), Config
-                .getProperty("CommitsPerUser.xLabel"), Config.getProperty("CommitsPerUser.yLabel"),
-                xAxisLabels, Config.getProperty("CommitsPerUser.title") + this.repository, legendLabels,
-                data, this.dir + filename);
+            new Graph().stackedBarChart(
+                Config.getIntProperty("CommitsPerUser.width", 850),
+                Config.getIntProperty("CommitsPerUser.height", 360),
+                Config.getProperty("CommitsPerUser.xLabel"),
+                Config.getProperty("CommitsPerUser.yLabel"),
+                xAxisLabels,
+                Config.getProperty("CommitsPerUser.title") + this.repository,
+                legendLabels,
+                data,
+                this.dir + filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,11 +239,16 @@ public class Stat {
             String[] legendLabels;
             legendLabels = (String[]) this.getUsers().toArray(new String[data.length]);
             filename = "AllUsers_commits.jpg";
-            new Graph().stackedBarChart(Config.getIntProperty("CommitsAllUsers.width", 850), Config
-                .getIntProperty("CommitsAllUsers.height", 360), Config
-                .getProperty("CommitsAllUsers.xLabel"), Config.getProperty("CommitsAllUsers.yLabel"),
-                xAxisLabels, Config.getProperty("CommitsAllUsers.title") + this.repository, legendLabels,
-                data, this.dir + filename);
+            new Graph().stackedBarChart(
+                Config.getIntProperty("CommitsAllUsers.width", 850),
+                Config.getIntProperty("CommitsAllUsers.height", 360),
+                Config.getProperty("CommitsAllUsers.xLabel"),
+                Config.getProperty("CommitsAllUsers.yLabel"),
+                xAxisLabels,
+                Config.getProperty("CommitsAllUsers.title") + this.repository,
+                legendLabels,
+                data,
+                this.dir + filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -272,11 +285,18 @@ public class Stat {
         try {
             String[] legendLabels = new String[] { Config.getProperty("CommitsTotal.yLabel") };
 
-            new Graph().lineChart(Config.getIntProperty("CommitsTotal.width", 850), Config
-                .getIntProperty("CommitsTotal.height", 360), Config.getProperty("CommitsTotal.xLabel"),
-                Config.getProperty("CommitsTotal.yLabel"), xAxisLabels, Config
-                    .getProperty("CommitsTotal.title")
-                    + this.repository, legendLabels, data, -1, -1, this.dir + "Total_commits.jpg");
+            new Graph().lineChart(
+                Config.getIntProperty("CommitsTotal.width", 850),
+                Config.getIntProperty("CommitsTotal.height", 360),
+                Config.getProperty("CommitsTotal.xLabel"),
+                Config.getProperty("CommitsTotal.yLabel"),
+                xAxisLabels,
+                Config.getProperty("CommitsTotal.title") + this.repository,
+                legendLabels,
+                data,
+                -1,
+                -1,
+                this.dir + "Total_commits.jpg");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -306,11 +326,16 @@ public class Stat {
             String[] legendLabels;
             legendLabels = new String[] { "added", "modified", "deleted" };
             filename = user + "_changes.jpg";
-            new Graph().stackedBarChart(Config.getIntProperty("ChangesPerUser.width", 850), Config
-                .getIntProperty("ChangesPerUser.height", 360), Config
-                .getProperty("ChangesPerUser.xlabel"), Config.getProperty("ChangesPerUser.ylabel"),
-                xAxisLabels, Config.getProperty("ChangesPerUser.title") + this.repository, legendLabels,
-                data, this.dir + filename);
+            new Graph().stackedBarChart(
+                Config.getIntProperty("ChangesPerUser.width", 850),
+                Config.getIntProperty("ChangesPerUser.height", 360),
+                Config.getProperty("ChangesPerUser.xlabel"),
+                Config.getProperty("ChangesPerUser.ylabel"),
+                xAxisLabels,
+                Config.getProperty("ChangesPerUser.title") + this.repository,
+                legendLabels,
+                data,
+                this.dir + filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -340,10 +365,13 @@ public class Stat {
             data[i - 1] = (((double) sum[i]) / ((double) sum[0])) * 100.0;
         }
         try {
-            new Graph().pieChart(Config.getIntProperty("CommitsPercentage.width", 850), Config
-                .getIntProperty("CommitsPercentage.height", 360), labels, Config
-                .getProperty("CommitsPercentage.title")
-                + this.repository, data, this.dir + "Commit_Percentage.jpg");
+            new Graph().pieChart(
+                Config.getIntProperty("CommitsPercentage.width", 850),
+                Config.getIntProperty("CommitsPercentage.height", 360),
+                labels,
+                Config.getProperty("CommitsPercentage.title") + this.repository,
+                data,
+                this.dir + "Commit_Percentage.jpg");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,12 +403,64 @@ public class Stat {
             String[] legendLabels;
             legendLabels = new String[] { Config.getProperty("CommitTimesPerUser.yLabel") };
             filename = user + "_commitTimes.jpg";
-            new Graph().stackedBarChart(Config.getIntProperty("CommitTimesPerUser.width", 850), Config
-                .getIntProperty("CommitTimesPerUser.height", 360), Config
-                .getProperty("CommitTimesPerUser.xLabel"), Config
-                .getProperty("CommitTimesPerUser.yLabel"), xAxisLabels, Config
-                .getProperty("CommitTimesPerUser.title")
-                + this.repository, legendLabels, data, this.dir + filename);
+            new Graph().stackedBarChart(
+                Config.getIntProperty("CommitTimesPerUser.width", 850),
+                Config.getIntProperty("CommitTimesPerUser.height", 360),
+                Config.getProperty("CommitTimesPerUser.xLabel"),
+                Config.getProperty("CommitTimesPerUser.yLabel"),
+                xAxisLabels,
+                Config.getProperty("CommitTimesPerUser.title") + this.repository,
+                legendLabels,
+                data,
+                this.dir + filename);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void commitDaysPerUser(String from, String to, String user) {
+        int offset = Config.getIntProperty("Server.timeoffset", 0);
+
+        String[] xAxisLabels = new String[7];
+
+        double[][] data = new double[1][7];
+
+        xAxisLabels[0] = Config.getProperty("CommitDaysPerUser.Mon");
+        data[0][0] = this.getCommitsPerDay(user, from, to, 1);
+
+        xAxisLabels[1] = Config.getProperty("CommitDaysPerUser.Tue");
+        data[0][1] = this.getCommitsPerDay(user, from, to, 2);
+
+        xAxisLabels[2] = Config.getProperty("CommitDaysPerUser.Wed");
+        data[0][2] = this.getCommitsPerDay(user, from, to, 3);
+
+        xAxisLabels[3] = Config.getProperty("CommitDaysPerUser.Thu");
+        data[0][3] = this.getCommitsPerDay(user, from, to, 4);
+
+        xAxisLabels[4] = Config.getProperty("CommitDaysPerUser.Fri");
+        data[0][4] = this.getCommitsPerDay(user, from, to, 5);
+
+        xAxisLabels[5] = Config.getProperty("CommitDaysPerUser.Sat");
+        data[0][5] = this.getCommitsPerDay(user, from, to, 6);
+
+        xAxisLabels[6] = Config.getProperty("CommitDaysPerUser.Sun");
+        data[0][6] = this.getCommitsPerDay(user, from, to, 7);
+
+        try {
+            String filename = null;
+            String[] legendLabels;
+            legendLabels = new String[] { Config.getProperty("CommitDaysPerUser.yLabel") };
+            filename = user + "_commitDays.jpg";
+            new Graph().stackedBarChart(
+                Config.getIntProperty("CommitDaysPerUser.width", 850),
+                Config.getIntProperty("CommitDaysPerUser.height", 360),
+                Config.getProperty("CommitDaysPerUser.xLabel"),
+                Config.getProperty("CommitDaysPerUser.yLabel"),
+                xAxisLabels,
+                Config.getProperty("CommitDaysPerUser.title") + this.repository,
+                legendLabels,
+                data,
+                this.dir + filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -435,10 +515,18 @@ public class Stat {
         try {
             String[] legendLabels = new String[] { Config.getProperty("FileCount.yLabel") };
 
-            new Graph().lineChart(Config.getIntProperty("FileCount.width", 850), Config.getIntProperty(
-                "FileCount.height", 360), Config.getProperty("FileCount.xLabel"), Config
-                .getProperty("FileCount.yLabel"), xAxisLabels, Config.getProperty("FileCount.title")
-                + this.repository, legendLabels, data, minValue, diff / 4, this.dir + "File_Count.jpg"); // TBD: preempting an exception when diff == 0
+            new Graph().lineChart(
+                Config.getIntProperty("FileCount.width", 850),
+                Config.getIntProperty("FileCount.height", 360),
+                Config.getProperty("FileCount.xLabel"),
+                Config.getProperty("FileCount.yLabel"),
+                xAxisLabels,
+                Config.getProperty("FileCount.title") + this.repository,
+                legendLabels,
+                data,
+                minValue,
+                diff / 4,
+                this.dir + "File_Count.jpg");
         } catch (Exception e) {
             e.printStackTrace();
             return true;
@@ -601,8 +689,8 @@ public class Stat {
             String date = (String) i.next();
             records.addAll(this.getRecordsByDate(date));
         }
-        int result = 0;
 
+        int result = 0;
         for (Iterator i = records.iterator(); i.hasNext();) {
             SvnRecord record = (SvnRecord) i.next();
             if (record.getUser().equals(user)) {
@@ -612,6 +700,39 @@ public class Stat {
                 }
             }
         }
+
+        return result;
+    }
+
+    public double getCommitsPerDay(String user, String from, String to, int dayNumber) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dayFormat = new SimpleDateFormat("u");
+
+        List records = new ArrayList();
+
+        List selectedDates = this.filterDates(from, to);
+        for (Iterator i = selectedDates.iterator(); i.hasNext();) {
+            String date = (String) i.next();
+            records.addAll(this.getRecordsByDate(date));
+        }
+
+        int result = 0;
+        for (Iterator i = records.iterator(); i.hasNext();) {
+            SvnRecord record = (SvnRecord) i.next();
+            if (record.getUser().equals(user)) {
+                Date parse;
+                try {
+                    parse = df.parse(record.getDate());
+                    String dayOfWeek = dayFormat.format(parse);
+                    if (Integer.parseInt(dayOfWeek) == dayNumber) {
+                        result++;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return result;
     }
 
