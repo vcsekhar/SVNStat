@@ -1,5 +1,5 @@
 /*
- * Copyright © 2006 Juergen Lind (jli@agentlab.de).
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -56,26 +56,31 @@ public class Graph {
 
     public static List paints = new AutoList();
 
-    public void stackedBarChart(int width, int height, String xAxisTitle, String yAxisTitle,
-                                String[] xAxisLabels, String title, String[] legendLabels,
-                                double[][] data, String filename) throws Exception {
+    public void stackedBarChart(
+        int width,
+        int height,
+        String xAxisTitle,
+        String yAxisTitle,
+        String[] xAxisLabels,
+        String title,
+        String[] legendLabels,
+        double[][] data,
+        String filename) throws Exception {
+
         LegendProperties legendProperties = new LegendProperties();
         ChartProperties chartProperties = new ChartProperties();
         AxisProperties axisProperties = new AxisProperties(false);
 
-        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10),
-            Color.black);
+        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10), Color.black);
         axisProperties.setXAxisLabelsAreVertical(true);
         axisProperties.getXAxisProperties().setScaleChartFont(axisScaleFont);
         axisProperties.getYAxisProperties().setScaleChartFont(axisScaleFont);
 
-        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12),
-            Color.black);
+        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12), Color.black);
         axisProperties.getXAxisProperties().setAxisTitleChartFont(axisTitleFont);
         axisProperties.getYAxisProperties().setAxisTitleChartFont(axisTitleFont);
 
-        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14),
-            Color.black);
+        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14), Color.black);
         chartProperties.setTitleFont(titleFont);
 
         this.showGrid(axisProperties);
@@ -89,40 +94,51 @@ public class Graph {
 
         IAxisDataSeries dataSeries = new DataSeries(xAxisLabels, xAxisTitle, yAxisTitle, title);
 
-        dataSeries.addIAxisPlotDataSet(new AxisChartDataSet(data, legendLabels, this
-            .getPaints(legendLabels.length), ChartType.BAR_STACKED, stackedBarChartProperties));
+        dataSeries.addIAxisPlotDataSet(
+            new AxisChartDataSet(
+                data,
+                legendLabels,
+                this.getPaints(legendLabels.length),
+                ChartType.BAR_STACKED,
+                stackedBarChartProperties));
 
-        AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties,
-            legendProperties, width, height);
+        AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties, legendProperties, width, height);
         JPEGEncoder.encode(axisChart, 1.0f, new FileOutputStream(filename));
+
     }
 
-    public void lineChart(int width, int height, String xAxisTitle, String yAxisTitle,
-                          String[] xAxisLabels, String title, String[] legendLabels, double[][] data,
-                          long minValue, long increase, String filename) throws Exception {
+    public void lineChart(
+        int width,
+        int height,
+        String xAxisTitle,
+        String yAxisTitle,
+        String[] xAxisLabels,
+        String title,
+        String[] legendLabels,
+        double[][] data,
+        long minValue,
+        long increase,
+        String filename) throws Exception {
+
         LegendProperties legendProperties = new LegendProperties();
         ChartProperties chartProperties = new ChartProperties();
         AxisProperties axisProperties = new AxisProperties(false);
 
-        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10),
-            Color.black);
+        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10), Color.black);
         axisProperties.setXAxisLabelsAreVertical(true);
         axisProperties.getXAxisProperties().setScaleChartFont(axisScaleFont);
         axisProperties.getYAxisProperties().setScaleChartFont(axisScaleFont);
 
-        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12),
-            Color.black);
+        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12), Color.black);
         axisProperties.getXAxisProperties().setAxisTitleChartFont(axisTitleFont);
         axisProperties.getYAxisProperties().setAxisTitleChartFont(axisTitleFont);
 
         if (minValue != -1) {
-            DataAxisProperties dataAxisProperties = (DataAxisProperties) axisProperties
-                .getYAxisProperties();
+            DataAxisProperties dataAxisProperties = (DataAxisProperties) axisProperties.getYAxisProperties();
             dataAxisProperties.setUserDefinedScale(minValue, increase);
         }
 
-        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14),
-            Color.black);
+        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14), Color.black);
         chartProperties.setTitleFont(titleFont);
 
         this.showGrid(axisProperties);
@@ -138,33 +154,31 @@ public class Graph {
         IAxisDataSeries dataSeries = new DataSeries(xAxisLabels, xAxisTitle, yAxisTitle, title);
 
         Paint[] color = new Paint[] { Color.BLUE };
-        dataSeries.addIAxisPlotDataSet(new AxisChartDataSet(data, legendLabels, color, ChartType.LINE,
-            lineChartProperties));
+        dataSeries.addIAxisPlotDataSet(
+            new AxisChartDataSet(data, legendLabels, color, ChartType.LINE, lineChartProperties));
 
-        AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties,
-            legendProperties, width, height);
+        AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties, legendProperties, width, height);
         JPEGEncoder.encode(axisChart, 1.0f, new FileOutputStream(filename));
+
     }
 
-    public void pieChart(int width, int height, String[] labels, String title, double[] data,
-                         String filename) throws Exception {
+    public void pieChart(
+        int width, int height, String[] labels, String title, double[] data, String filename) throws Exception {
+
         LegendProperties legendProperties = new LegendProperties();
         ChartProperties chartProperties = new ChartProperties();
         AxisProperties axisProperties = new AxisProperties(false);
 
-        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10),
-            Color.black);
+        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10), Color.black);
         axisProperties.setXAxisLabelsAreVertical(true);
         axisProperties.getXAxisProperties().setScaleChartFont(axisScaleFont);
         axisProperties.getYAxisProperties().setScaleChartFont(axisScaleFont);
 
-        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12),
-            Color.black);
+        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12), Color.black);
         axisProperties.getXAxisProperties().setAxisTitleChartFont(axisTitleFont);
         axisProperties.getYAxisProperties().setAxisTitleChartFont(axisTitleFont);
 
-        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14),
-            Color.black);
+        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14), Color.black);
         chartProperties.setTitleFont(titleFont);
 
         this.showGrid(axisProperties);
@@ -176,64 +190,80 @@ public class Graph {
         PieChart2DProperties pieChart2DProperties = new PieChart2DProperties();
         pieChart2DProperties.setPieLabelType(PieLabelType.VALUE_LABELS);
 
-        PieChartDataSet pieChartDataSet = new PieChartDataSet(title, data, labels, this
-            .getPaints(labels.length), pieChart2DProperties);
+        PieChartDataSet pieChartDataSet =
+            new PieChartDataSet(title, data, labels, this.getPaints(labels.length), pieChart2DProperties);
 
-        PieChart2D pieChart2D = new PieChart2D(pieChartDataSet, legendProperties, chartProperties,
-            width, height);
+        PieChart2D pieChart2D = new PieChart2D(pieChartDataSet, legendProperties, chartProperties, width, height);
 
         JPEGEncoder.encode(pieChart2D, 1.0f, new FileOutputStream(filename));
+
     }
 
-    public void verticalBarChart(int width, int height, String xAxisTitle, String yAxisTitle,
-                                 String[] xAxisLabels, String title, String[] legendLabels,
-                                 double[][] data, String filename) throws Exception {
+    public void verticalBarChart(
+        int width,
+        int height,
+        String xAxisTitle,
+        String yAxisTitle,
+        String[] xAxisLabels,
+        String title,
+        String[] legendLabels,
+        double[][] data,
+        String filename) throws Exception {
+
         LegendProperties legendProperties = new LegendProperties();
         ChartProperties chartProperties = new ChartProperties();
         ClusteredBarChartProperties clusteredBarChartProperties = new ClusteredBarChartProperties();
 
         DataSeries dataSeries = new DataSeries(xAxisLabels, xAxisTitle, yAxisTitle, title);
 
-        AxisChartDataSet axisChartDataSet = new AxisChartDataSet(
-            data, legendLabels, getPaints(legendLabels.length), ChartType.BAR_CLUSTERED,
-            clusteredBarChartProperties);
+        AxisChartDataSet axisChartDataSet =
+            new AxisChartDataSet(
+                data,
+                legendLabels,
+                getPaints(legendLabels.length),
+                ChartType.BAR_CLUSTERED,
+                clusteredBarChartProperties);
 
         dataSeries.addIAxisPlotDataSet(axisChartDataSet);
 
         AxisProperties axisProperties = new AxisProperties(true);
 
-        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10),
-            Color.black);
+        ChartFont axisScaleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 10), Color.black);
         axisProperties.setXAxisLabelsAreVertical(true);
         axisProperties.getXAxisProperties().setScaleChartFont(axisScaleFont);
         axisProperties.getYAxisProperties().setScaleChartFont(axisScaleFont);
 
-        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12),
-            Color.black);
+        ChartFont axisTitleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 12), Color.black);
         axisProperties.getXAxisProperties().setAxisTitleChartFont(axisTitleFont);
         axisProperties.getYAxisProperties().setAxisTitleChartFont(axisTitleFont);
 
-        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14),
-            Color.black);
+        ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14), Color.black);
         chartProperties.setTitleFont(titleFont);
 
         this.showGrid(axisProperties);
 
-        AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties,
-            legendProperties, width, height);
+        AxisChart axisChart =
+            new AxisChart(dataSeries, chartProperties, axisProperties, legendProperties, width, height);
 
         JPEGEncoder.encode(axisChart, 1.0f, new FileOutputStream(filename));
+
     }
 
     private void showGrid(AxisProperties axisProperties) {
-        ChartStroke stroke = new ChartStroke(new BasicStroke(0.5f, 0, 0, 1f, new float[] {
-            0.5f, 0.5f, 1f, 0.5f }, 0.5f), Color.BLACK);
+        ChartStroke stroke =
+            new ChartStroke(
+                new BasicStroke(
+                    0.5f,
+                    0,
+                    0,
+                    1f,
+                    new float[] { 0.5f, 0.5f, 1f, 0.5f },
+                    0.5f),
+                Color.BLACK);
         axisProperties.getXAxisProperties().setGridLineChartStroke(stroke);
-        axisProperties.getXAxisProperties().setShowGridLines(
-            AxisTypeProperties.GRID_LINES_ONLY_WITH_LABELS);
+        axisProperties.getXAxisProperties().setShowGridLines(AxisTypeProperties.GRID_LINES_ONLY_WITH_LABELS);
         axisProperties.getYAxisProperties().setGridLineChartStroke(stroke);
-        axisProperties.getYAxisProperties().setShowGridLines(
-            AxisTypeProperties.GRID_LINES_ONLY_WITH_LABELS);
+        axisProperties.getYAxisProperties().setShowGridLines(AxisTypeProperties.GRID_LINES_ONLY_WITH_LABELS);
     }
 
     private Paint[] getPaints(int count) {
@@ -245,8 +275,8 @@ public class Graph {
     }
 
     public static void parseConfig() {
-        for (Enumeration e = Config.getKeys(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
+        for (Enumeration<String> e = Config.getKeys(); e.hasMoreElements();) {
+            String key = e.nextElement();
             if (key.startsWith("Color")) {
                 String indexStr = key.substring(key.indexOf(".") + 1);
                 paints.set(Integer.parseInt(indexStr), Color.decode(Config.getProperty(key)));

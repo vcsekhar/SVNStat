@@ -1,5 +1,5 @@
 /* 
- * Copyright © 2006 Juergen Lind (jli@agentlab.de).
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -28,10 +28,10 @@ import java.util.HashMap;
  */
 public class CLI {
 
-    private HashMap options;
+    private HashMap<String, Comparable> options;
 
     public CLI() {
-        this.options = new HashMap();
+        this.options = new HashMap<String, Comparable>();
     }
 
     /**
@@ -40,7 +40,7 @@ public class CLI {
      * with a dash). Options without arguments are considered boolean. Note that it is not possible to
      * provide a list of non-option arguments.
      * 
-     * @param argv the vectore of command line arguments
+     * @param argv the vector of command line arguments
      */
     public void parseOptions(String[] argv) {
         int i = 0;
@@ -50,7 +50,7 @@ public class CLI {
 
             if (arg.startsWith("-")) {
                 if (i != argv.length) {
-                    // there may be an argument to this option
+                    // There may be an argument to this option.
                     String value = argv[i];
 
                     if (!value.startsWith("-")) {
@@ -62,7 +62,7 @@ public class CLI {
                         this.options.put(arg.substring(1), new Boolean(true));
                     }
                 } else {
-                    // this is the last option, there cannot be an argument
+                    // This is the last option: there cannot be an argument.
                     this.options.put(arg.substring(1), new Boolean(true));
                 }
             }
@@ -74,7 +74,7 @@ public class CLI {
      * 
      * @return the options HashMap
      */
-    public HashMap getOptions() {
+    public HashMap<String, Comparable> getOptions() {
         return this.options;
     }
 
