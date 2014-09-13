@@ -1,5 +1,5 @@
 /*
- * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
+ * Copyright © 2006, 2014 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -102,8 +102,8 @@ public class SvnStat {
 
             stat.commitsAllUsers(beginDate, endDate);
 
-            for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
-                String user = (String) i.next();
+            for (Iterator<String> i = stat.getUsers().iterator(); i.hasNext();) {
+                String user = i.next();
 
                 stat.commitsPerUser(beginDate, endDate, user);
 
@@ -130,12 +130,12 @@ public class SvnStat {
         SAXBuilder builder = new SAXBuilder();
         try {
             Document document = builder.build(in);
-            for (Iterator i = document.getRootElement().getContent().iterator(); i.hasNext();) {
-                Content logentry = (Content) i.next();
-                if (logentry instanceof Element) {
+            for (Iterator<Content> i = document.getRootElement().getContent().iterator(); i.hasNext();) {
+                Content logEntry = i.next();
+                if (logEntry instanceof Element) {
                     String authorStr;
 
-                    Element authorNode = ((Element) logentry).getChild("author");
+                    Element authorNode = ((Element) logEntry).getChild("author");
                     if (authorNode != null) {
                         authorStr = authorNode.getValue();
                     } else {
@@ -148,7 +148,7 @@ public class SvnStat {
                       user = authorStr.trim();
                     }
 
-                    String dateStr = ((Element) logentry).getChild("date").getValue();
+                    String dateStr = ((Element) logEntry).getChild("date").getValue();
 
                     int index = dateStr.trim().indexOf("T");
                     String date = dateStr.trim().substring(0, index);
@@ -156,21 +156,21 @@ public class SvnStat {
 
                     SvnRecord record = new SvnRecord();
 
-                    List nodes = XPath.selectNodes(logentry, "paths/path[@action='A']");
+                    List nodes = XPath.selectNodes(logEntry, "paths/path[@action='A']");
                     for (Iterator j = nodes.iterator(); j.hasNext();) {
                         Element element = (Element) j.next();
                         record.addFile(element.getValue());
                     }
                     int added = nodes.size();
 
-                    nodes = XPath.selectNodes(logentry, "paths/path[@action='M']");
+                    nodes = XPath.selectNodes(logEntry, "paths/path[@action='M']");
                     for (Iterator j = nodes.iterator(); j.hasNext();) {
                         Element element = (Element) j.next();
                         record.addFile(element.getValue());
                     }
                     int modified = nodes.size();
 
-                    nodes = XPath.selectNodes(logentry, "paths/path[@action='D']");
+                    nodes = XPath.selectNodes(logEntry, "paths/path[@action='D']");
                     for (Iterator j = nodes.iterator(); j.hasNext();) {
                         Element element = (Element) j.next();
                         record.addFile(element.getValue());
@@ -223,8 +223,8 @@ public class SvnStat {
         content += "<img src=\"AllUsers_commits.jpg\">";
         content += "<img src=\"Commit_Percentage.jpg\">";
 
-        for (Iterator i = stat.getUsers().iterator(); i.hasNext();) {
-            String user = (String) i.next();
+        for (Iterator<String> i = stat.getUsers().iterator(); i.hasNext();) {
+            String user = i.next();
 
             content += "<h2>" + user + "</h2>";
             content += "<img src=\"" + user + "_commits.jpg\">";
@@ -270,10 +270,14 @@ public class SvnStat {
     }
 
     private static void printUsage() {
-        System.out
-            .println("Usage: SvnStat -r <repository/logfile> [-d <outputDir>] [-config <configfile>] [-begin <date>] [-end <date>]");
-        System.out
-            .println("               (if using a logfile, the log must be retrieved using --verbose and --xml)");
+        System.out.println(
+            "Usage: SvnStat -r <repository/logfile> " +
+                "[-d <outputDir>] " +
+                "[-config <configfile>] " +
+                "[-begin <date>] " +
+                "[-end <date>]");
+        System.out.println(
+            "               (To use a logfile, the log must be retrieved using --verbose and --xml.)");
     }
 
 }

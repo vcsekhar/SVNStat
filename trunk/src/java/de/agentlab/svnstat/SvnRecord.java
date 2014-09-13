@@ -1,5 +1,5 @@
 /*
- * Copyright © 2006 Juergen Lind (jli@agentlab.de).
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -23,13 +23,13 @@ import java.util.List;
 
 public class SvnRecord {
 
-    private String date;
-    private String time;
-    private String user;
-    private int    added;
-    private int    modified;
-    private int    deleted;
-    private List   files = new ArrayList();
+    private String       date;
+    private String       time;
+    private String       user;
+    private int          added;
+    private int          modified;
+    private int          deleted;
+    private List<String> files = new ArrayList<String>();
 
     public String getDate() {
         return this.date;
@@ -83,7 +83,7 @@ public class SvnRecord {
         this.files.add(filename);
     }
 
-    public List getFiles() {
+    public List<String> getFiles() {
         return this.files;
     }
 

@@ -39,24 +39,24 @@ import org.apache.commons.math.stat.StatUtils;
 
 public class Stat {
 
-    private String      dir                 = "./";
-    private String      repository;
+    private String                       dir                 = "./";
+    private String                       repository;
 
-    private List        users               = new ArrayList();
-    private List        dates               = new ArrayList();
-    private List        records             = new ArrayList();
-    private Map         recordByDateMap     = new HashMap();
-    private List        moduleList          = new ArrayList();
+    private List<String>                 users               = new ArrayList<String>();
+    private List<String>                 dates               = new ArrayList<String>();
+    private List<SvnRecord>              records             = new ArrayList<SvnRecord>();
+    private Map<String, List<SvnRecord>> recordByDateMap     = new HashMap<String, List<SvnRecord>>();
+    private List<String>                 moduleList          = new ArrayList<String>();
 
-    private MultiKeyMap datesFromTo         = new MultiKeyMap();
-    private MultiKeyMap commitsDateUser     = new MultiKeyMap();
-    private MultiKeyMap countUserModule     = new MultiKeyMap();
-    private MultiKeyMap countUserModuleDate = new MultiKeyMap();
+    private MultiKeyMap                  datesFromTo         = new MultiKeyMap();
+    private MultiKeyMap                  commitsDateUser     = new MultiKeyMap();
+    private MultiKeyMap                  countUserModule     = new MultiKeyMap();
+    private MultiKeyMap                  countUserModuleDate = new MultiKeyMap();
 
-    private List        moduleMapping       = new ArrayList();
+    private List<String[][]>             moduleMapping       = new ArrayList<String[][]>();
 
     public Stat() {
-        for (Enumeration e = Config.getKeys(); e.hasMoreElements();) {
+        for (Enumeration<String> e = Config.getKeys(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             if (key.startsWith("Module")) {
                 String moduleName = key.substring(key.indexOf(".") + 1);
@@ -84,20 +84,20 @@ public class Stat {
         return this.repository;
     }
 
-    public List getDates() {
+    public List<String> getDates() {
         return this.dates;
     }
 
-    public List getUsers() {
+    public List<String> getUsers() {
         return this.users;
     }
 
     public void addRecord(SvnRecord record) {
         this.records.add(record);
 
-        List records = (List) this.recordByDateMap.get(record.getDate());
+        List<SvnRecord> records = this.recordByDateMap.get(record.getDate());
         if (records == null) {
-            records = new ArrayList();
+            records = new ArrayList<SvnRecord>();
         }
         records.add(record);
         this.recordByDateMap.put(record.getDate(), records);
@@ -116,8 +116,8 @@ public class Stat {
             return cachedResult.intValue();
         }
         int result = 0;
-        for (Iterator i = this.records.iterator(); i.hasNext();) {
-            SvnRecord record = (SvnRecord) i.next();
+        for (Iterator<SvnRecord> i = this.records.iterator(); i.hasNext();) {
+            SvnRecord record = i.next();
             if (record.getDate().equals(date) && record.getUser().equals(user)) {
                 result++;
             }
@@ -129,8 +129,8 @@ public class Stat {
 
     public int getChanges(String date, String user, String type) {
         int result = 0;
-        for (Iterator i = this.records.iterator(); i.hasNext();) {
-            SvnRecord record = (SvnRecord) i.next();
+        for (Iterator<SvnRecord> i = this.records.iterator(); i.hasNext();) {
+            SvnRecord record = i.next();
             if (record.getDate().equals(date) && record.getUser().equals(user)) {
                 if (type.equals("added")) {
                     result += record.getAdded();
@@ -147,7 +147,7 @@ public class Stat {
     }
 
     public void commitsPerUser(String from, String to, String user) {
-        List selectedDates = this.filterDates(from, to);
+        List<String> selectedDates = this.filterDates(from, to);
 
         String[] xAxisLabels = new String[selectedDates.size()];
 
@@ -160,8 +160,8 @@ public class Stat {
         this.printCsv("\n");
 
         int index = 0;
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
 
             xAxisLabels[index] = date;
             this.printCsv(date + ", ");
@@ -195,7 +195,7 @@ public class Stat {
     }
 
     public void commitsAllUsers(String from, String to) {
-        List selectedDates = this.filterDates(from, to);
+        List<String> selectedDates = this.filterDates(from, to);
 
         String[] xAxisLabels = new String[selectedDates.size()];
 
@@ -204,8 +204,8 @@ public class Stat {
 
         this.printCsv("Datum, ");
 
-        for (Iterator i = this.getUsers().iterator(); i.hasNext();) {
-            this.printCsv((String) i.next());
+        for (Iterator<String> i = this.getUsers().iterator(); i.hasNext();) {
+            this.printCsv(i.next());
             if (i.hasNext()) {
                 this.printCsv(", ");
             }
@@ -214,16 +214,16 @@ public class Stat {
         this.printCsv("\n");
 
         int index = 0;
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
 
             xAxisLabels[index] = date;
             this.printCsv(date + ", ");
 
             int sum = 0;
             int jindex = 0;
-            for (Iterator j = this.getUsers().iterator(); j.hasNext(); jindex++) {
-                int commits = this.countCommits(date, (String) j.next());
+            for (Iterator<String> j = this.getUsers().iterator(); j.hasNext(); jindex++) {
+                int commits = this.countCommits(date, j.next());
                 this.printCsv(commits);
                 this.printCsv(", ");
                 data[jindex][index] = commits;
@@ -237,7 +237,7 @@ public class Stat {
         try {
             String filename = null;
             String[] legendLabels;
-            legendLabels = (String[]) this.getUsers().toArray(new String[data.length]);
+            legendLabels = this.getUsers().toArray(new String[data.length]);
             filename = "AllUsers_commits.jpg";
             new Graph().stackedBarChart(
                 Config.getIntProperty("CommitsAllUsers.width", 850),
@@ -255,7 +255,7 @@ public class Stat {
     }
 
     public void commitsTotal(String from, String to) {
-        List selectedDates = this.filterDates(from, to);
+        List<String> selectedDates = this.filterDates(from, to);
 
         String[] xAxisLabels = new String[selectedDates.size()];
 
@@ -264,15 +264,15 @@ public class Stat {
         this.printCsv("Datum, Total\n");
 
         int index = 0;
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
 
             xAxisLabels[index] = date;
             this.printCsv(date + ", ");
 
             int sum = 0;
-            for (Iterator j = this.getUsers().iterator(); j.hasNext();) {
-                int commits = this.countCommits(date, (String) j.next());
+            for (Iterator<String> j = this.getUsers().iterator(); j.hasNext();) {
+                int commits = this.countCommits(date, j.next());
                 sum += commits;
                 data[0][index] = sum;
             }
@@ -303,15 +303,15 @@ public class Stat {
     }
 
     public void changesPerUser(String from, String to, String user) {
-        List selectedDates = this.filterDates(from, to);
+        List<String> selectedDates = this.filterDates(from, to);
 
         String[] xAxisLabels = new String[selectedDates.size()];
 
         double[][] data = new double[3][selectedDates.size()];
 
         int index = 0;
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
 
             xAxisLabels[index] = date;
 
@@ -347,12 +347,12 @@ public class Stat {
 
         int index = 0;
         int sum[] = new int[this.getUsers().size() + 1];
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
 
             int jindex = 1;
-            for (Iterator j = this.getUsers().iterator(); j.hasNext(); jindex++) {
-                int commits = this.countCommits(date, (String) j.next());
+            for (Iterator<String> j = this.getUsers().iterator(); j.hasNext(); jindex++) {
+                int commits = this.countCommits(date, j.next());
                 sum[0] += commits;
                 sum[jindex] += commits;
             }
@@ -361,7 +361,7 @@ public class Stat {
         }
 
         for (int i = 1; i < sum.length; i++) {
-            labels[i - 1] = (String) this.getUsers().get(i - 1);
+            labels[i - 1] = this.getUsers().get(i - 1);
             data[i - 1] = (((double) sum[i]) / ((double) sum[0])) * 100.0;
         }
         try {
@@ -467,7 +467,7 @@ public class Stat {
     }
 
     public boolean fileCount(String from, String to) {
-        List selectedDates = this.filterDates(from, to);
+        List<String> selectedDates = this.filterDates(from, to);
 
         if (selectedDates.isEmpty())
             return false;
@@ -480,8 +480,8 @@ public class Stat {
 
         if (from != null) {
             // Compute the number of files up to selected start date.
-            for (Iterator i = this.filterDates("0000-00-00", from).iterator(); i.hasNext();) {
-                String date = (String) i.next();
+            for (Iterator<String> i = this.filterDates("0000-00-00", from).iterator(); i.hasNext();) {
+                String date = i.next();
 
                 if (i.hasNext()) {
                     // Omit the last date.
@@ -491,11 +491,11 @@ public class Stat {
         }
         int sum = base;
         int index = 0;
-        List filteredDates = this.filterDates(from, to);
+        List<String> filteredDates = this.filterDates(from, to);
         if (filteredDates.isEmpty())
             return false;
-        for (Iterator i = filteredDates.iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        for (Iterator<String> i = filteredDates.iterator(); i.hasNext();) {
+            String date = i.next();
 
             sum += getFileCount(date);
             xAxisLabels[index] = date;
@@ -540,11 +540,11 @@ public class Stat {
             return;
         }
 
-        Map modulesPerDay = new HashMap();
+        Map<String, List<String>> modulesPerDay = new HashMap<String, List<String>>();
 
-        for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-            String date = (String) i.next();
-            List modules = new ArrayList();
+        for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+            String date = i.next();
+            List<String> modules = new ArrayList<String>();
 
             List records = this.getRecordsByDate(date);
             for (Iterator l = records.iterator(); l.hasNext();) {
@@ -557,8 +557,8 @@ public class Stat {
                 List files = record.getFiles();
                 for (Iterator j = files.iterator(); j.hasNext();) {
                     String filename = (String) j.next();
-                    for (Iterator k = this.moduleMapping.iterator(); k.hasNext();) {
-                        String[][] mapping = (String[][]) k.next();
+                    for (Iterator<String[][]> k = this.moduleMapping.iterator(); k.hasNext();) {
+                        String[][] mapping = k.next();
                         String patternString = mapping[0][0];
                         String moduleName = mapping[0][1];
                         Pattern pattern = Pattern.compile(patternString);
@@ -584,17 +584,17 @@ public class Stat {
             }
             if (modules.size() > 0) {
                 modulesPerDay.put(date, modules);
-                for (Iterator j = modules.iterator(); j.hasNext();) {
-                    String module = (String) j.next();
+                for (Iterator<String> j = modules.iterator(); j.hasNext();) {
+                    String module = j.next();
                     this.addCommitCount(user, module);
                 }
             }
         }
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(this.dir + user + "_modules.txt"));
-                for (Iterator i = this.filterDates(from, to).iterator(); i.hasNext();) {
-                    String date = (String) i.next();
-                    List modules = (List) modulesPerDay.get(date);
+                for (Iterator<String> i = this.filterDates(from, to).iterator(); i.hasNext();) {
+                    String date = i.next();
+                    List<String> modules = modulesPerDay.get(date);
                     if (modules != null) {
                         pw.println(date + ": " + modules);
                     }
@@ -608,11 +608,11 @@ public class Stat {
     public void moduleActivityPerUser() {
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(this.dir + "moduleActivity.csv"));
-            for (Iterator i = this.users.iterator(); i.hasNext();) {
-                String user = (String) i.next();
+            for (Iterator<String> i = this.users.iterator(); i.hasNext();) {
+                String user = i.next();
                 pw.println(user + ", ,");
-                for (Iterator j = this.moduleList.iterator(); j.hasNext();) {
-                    String module = (String) j.next();
+                for (Iterator<String> j = this.moduleList.iterator(); j.hasNext();) {
+                    String module = j.next();
                     Integer count = (Integer) this.countUserModule.get(user, module);
                     if (count != null) {
                         pw.println(", " + module + ", " + count);
@@ -627,16 +627,17 @@ public class Stat {
 
     public void moduleActivityPerUserPerDate() {
         try {
-            for (Iterator i = this.users.iterator(); i.hasNext();) {
-                String user = (String) i.next();
-                PrintWriter pw = new PrintWriter(new FileOutputStream(this.dir + "/" + user + "_moduleActivityPerDate.csv"));
+            for (Iterator<String> i = this.users.iterator(); i.hasNext();) {
+                String user = i.next();
+                PrintWriter pw =
+                    new PrintWriter(new FileOutputStream(this.dir + "/" + user + "_moduleActivityPerDate.csv"));
 
-                for (Iterator j = this.dates.iterator(); j.hasNext();) {
-                    String date = (String) j.next();
+                for (Iterator<String> j = this.dates.iterator(); j.hasNext();) {
+                    String date = j.next();
                     pw.print(date + ": ");
                     boolean first = true;
-                    for (Iterator k = this.moduleList.iterator(); k.hasNext();) {
-                        String module = (String) k.next();
+                    for (Iterator<String> k = this.moduleList.iterator(); k.hasNext();) {
+                        String module = k.next();
                         Integer count = (Integer) this.countUserModuleDate.get(user, module, date);
                         if (count != null) {
                             if (!first) {
@@ -663,15 +664,15 @@ public class Stat {
         this.countUserModule.put(user, module, new Integer(curVal.intValue() + 1));
     }
 
-    private List getRecordsByDate(String date) {
-        List records = (List) this.recordByDateMap.get(date);
+    private List<SvnRecord> getRecordsByDate(String date) {
+        List<SvnRecord> records = this.recordByDateMap.get(date);
         return records;
     }
 
     private int getFileCount(String date) {
         int sum = 0;
-        for (Iterator j = this.users.iterator(); j.hasNext();) {
-            String user = (String) j.next();
+        for (Iterator<String> j = this.users.iterator(); j.hasNext();) {
+            String user = j.next();
             int added = this.getChanges(date, user, "added");
             int deleted = this.getChanges(date, user, "deleted");
 
@@ -682,17 +683,17 @@ public class Stat {
     }
 
     private double getCommitsPerHour(String user, String from, String to, String hour) {
-        List records = new ArrayList();
+        List<SvnRecord> records = new ArrayList<SvnRecord>();
 
-        List selectedDates = this.filterDates(from, to);
-        for (Iterator i = selectedDates.iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        List<String> selectedDates = this.filterDates(from, to);
+        for (Iterator<String> i = selectedDates.iterator(); i.hasNext();) {
+            String date = i.next();
             records.addAll(this.getRecordsByDate(date));
         }
 
         int result = 0;
-        for (Iterator i = records.iterator(); i.hasNext();) {
-            SvnRecord record = (SvnRecord) i.next();
+        for (Iterator<SvnRecord> i = records.iterator(); i.hasNext();) {
+            SvnRecord record = i.next();
             if (record.getUser().equals(user)) {
                 String commitHour = record.getTime().substring(0, 2);
                 if (commitHour.equals(hour)) {
@@ -708,17 +709,17 @@ public class Stat {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dayFormat = new SimpleDateFormat("u");
 
-        List records = new ArrayList();
+        List<SvnRecord> records = new ArrayList<SvnRecord>();
 
-        List selectedDates = this.filterDates(from, to);
-        for (Iterator i = selectedDates.iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        List<String> selectedDates = this.filterDates(from, to);
+        for (Iterator<String> i = selectedDates.iterator(); i.hasNext();) {
+            String date = i.next();
             records.addAll(this.getRecordsByDate(date));
         }
 
         int result = 0;
-        for (Iterator i = records.iterator(); i.hasNext();) {
-            SvnRecord record = (SvnRecord) i.next();
+        for (Iterator<SvnRecord> i = records.iterator(); i.hasNext();) {
+            SvnRecord record = i.next();
             if (record.getUser().equals(user)) {
                 Date parse;
                 try {
@@ -736,15 +737,15 @@ public class Stat {
         return result;
     }
 
-    private List filterDates(String from, String to) {
-        List cachedResult = (List) this.datesFromTo.get(from, to);
+    private List<String> filterDates(String from, String to) {
+        List<String> cachedResult = (List<String>) this.datesFromTo.get(from, to);
         if (cachedResult != null) {
             return cachedResult;
         }
 
-        List result = new ArrayList();
-        for (Iterator i = this.dates.iterator(); i.hasNext();) {
-            String date = (String) i.next();
+        List<String> result = new ArrayList<String>();
+        for (Iterator<String> i = this.dates.iterator(); i.hasNext();) {
+            String date = i.next();
 
             if (from != null && to != null) {
                 if (date.compareTo(from) >= 0 && date.compareTo(to) <= 0) {

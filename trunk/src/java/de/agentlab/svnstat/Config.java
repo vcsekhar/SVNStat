@@ -1,5 +1,5 @@
 /*
- * Copyright © 2006 Juergen Lind (jli@agentlab.de).
+ * Copyright © 2006 Juergen Lind (jli@agentlab.de), 2014 Joe Egan (J0e3gan@gmail.com).
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation; either version 2.1 of
@@ -55,7 +55,7 @@ public class Config {
         }
     }
 
-    public static Enumeration getKeys() {
+    public static Enumeration<String> getKeys() {
         return config.getKeys();
     }
 
