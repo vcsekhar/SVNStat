@@ -87,6 +87,7 @@ public class SvnStat {
 
             Collections.reverse(stat.getDates());
 
+            stat.setDir(outdir);
             stat.setRepository(repository);
 
             boolean hasFiles = stat.fileCount(beginDate, endDate);
@@ -95,8 +96,6 @@ public class SvnStat {
                 System.out.println("No commits to analyze.");
                 return;
             }
-
-            stat.setDir(outdir);
 
             stat.commitsPercentage(beginDate, endDate);
 
