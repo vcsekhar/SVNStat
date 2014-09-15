@@ -60,7 +60,7 @@ public class SvnStat {
 
         this.repository = cli.getStringOption("r");
         if (this.repository == null) {
-            System.out.println("Repository or logfie (-r option) must be provided!");
+            System.out.println("Repository or log file (-r option) must be provided!");
             return false;
         }
 
