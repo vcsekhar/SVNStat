@@ -116,8 +116,8 @@ public class Graph {
         String title,
         String[] legendLabels,
         double[][] data,
-        long minValue,
-        long increase,
+        long yAxisMinValue,
+        long yAxisIncrement,
         String filename) throws Exception {
 
         LegendProperties legendProperties = new LegendProperties();
@@ -133,9 +133,11 @@ public class Graph {
         axisProperties.getXAxisProperties().setAxisTitleChartFont(axisTitleFont);
         axisProperties.getYAxisProperties().setAxisTitleChartFont(axisTitleFont);
 
-        if (minValue != -1) {
+        // If yAxisIncrement <= 0, then org.jCharts.properties.DataAxisProperties.setUserDefinedScale will throw a
+        // org.jCharts.properties.PropertyException ("The Axis Increment can not be a negative value or zero.").
+        if (yAxisMinValue != -1 && yAxisIncrement > 0) {
             DataAxisProperties dataAxisProperties = (DataAxisProperties) axisProperties.getYAxisProperties();
-            dataAxisProperties.setUserDefinedScale(minValue, increase);
+            dataAxisProperties.setUserDefinedScale(yAxisMinValue, yAxisIncrement);
         }
 
         ChartFont titleFont = new ChartFont(new Font("Georgia Negreta cursiva", Font.PLAIN, 14), Color.black);
