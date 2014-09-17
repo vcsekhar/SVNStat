@@ -206,14 +206,16 @@ public class SvnStat {
     public void writeIndexFile(Stat stat) {
         String content = "";
 
+        String titleAndHeadline = Config.getProperty("Report.headline") + this.repository;
+
         content += "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\">";
         content += "<html>";
         content += "<head>";
-        content += "<title>SVNstat</title>";
+        content += "<title>" + titleAndHeadline + "</title>";
         content += "</head>";
 
         content += "<body>";
-        content += "<h2>" + Config.getProperty("Report.headline") + "</h2>";
+        content += "<h2>" + titleAndHeadline + "</h2>";
 
         content += "<img src=\"Total_commits.jpg\">";
         content += "<img src=\"File_Count.jpg\">";

@@ -185,7 +185,7 @@ public class Stat {
                 Config.getProperty("CommitsPerUser.xLabel"),
                 Config.getProperty("CommitsPerUser.yLabel"),
                 xAxisLabels,
-                Config.getProperty("CommitsPerUser.title") + this.repository,
+                Config.getProperty("CommitsPerUser.title") + user,
                 legendLabels,
                 data,
                 this.dir + filename);
@@ -245,7 +245,7 @@ public class Stat {
                 Config.getProperty("CommitsAllUsers.xLabel"),
                 Config.getProperty("CommitsAllUsers.yLabel"),
                 xAxisLabels,
-                Config.getProperty("CommitsAllUsers.title") + this.repository,
+                Config.getProperty("CommitsAllUsers.title"),
                 legendLabels,
                 data,
                 this.dir + filename);
@@ -291,7 +291,7 @@ public class Stat {
                 Config.getProperty("CommitsTotal.xLabel"),
                 Config.getProperty("CommitsTotal.yLabel"),
                 xAxisLabels,
-                Config.getProperty("CommitsTotal.title") + this.repository,
+                Config.getProperty("CommitsTotal.title"),
                 legendLabels,
                 data,
                 -1,
@@ -332,7 +332,7 @@ public class Stat {
                 Config.getProperty("ChangesPerUser.xlabel"),
                 Config.getProperty("ChangesPerUser.ylabel"),
                 xAxisLabels,
-                Config.getProperty("ChangesPerUser.title") + this.repository,
+                Config.getProperty("ChangesPerUser.title") + user,
                 legendLabels,
                 data,
                 this.dir + filename);
@@ -369,7 +369,7 @@ public class Stat {
                 Config.getIntProperty("CommitsPercentage.width", 850),
                 Config.getIntProperty("CommitsPercentage.height", 360),
                 labels,
-                Config.getProperty("CommitsPercentage.title") + this.repository,
+                Config.getProperty("CommitsPercentage.title"),
                 data,
                 this.dir + "Commit_Percentage.jpg");
         } catch (Exception e) {
@@ -409,7 +409,7 @@ public class Stat {
                 Config.getProperty("CommitTimesPerUser.xLabel"),
                 Config.getProperty("CommitTimesPerUser.yLabel"),
                 xAxisLabels,
-                Config.getProperty("CommitTimesPerUser.title") + this.repository,
+                Config.getProperty("CommitTimesPerUser.title") + user,
                 legendLabels,
                 data,
                 this.dir + filename);
@@ -457,7 +457,7 @@ public class Stat {
                 Config.getProperty("CommitDaysPerUser.xLabel"),
                 Config.getProperty("CommitDaysPerUser.yLabel"),
                 xAxisLabels,
-                Config.getProperty("CommitDaysPerUser.title") + this.repository,
+                Config.getProperty("CommitDaysPerUser.title") + user,
                 legendLabels,
                 data,
                 this.dir + filename);
@@ -521,7 +521,7 @@ public class Stat {
                 Config.getProperty("FileCount.xLabel"),
                 Config.getProperty("FileCount.yLabel"),
                 xAxisLabels,
-                Config.getProperty("FileCount.title") + this.repository,
+                Config.getProperty("FileCount.title"),
                 legendLabels,
                 data,
                 minValue,
