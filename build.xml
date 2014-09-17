@@ -56,7 +56,7 @@
 
   <target name="run">
   	<java classname="de.agentlab.svnstat.SvnStat" fork="yes">
-  	  <arg line="-r examples/svnlog/pisa_svnlog.xml"/>
+  	  <arg line="-r examples/svnlog/test_svnlog.xml"/>
   	  <arg line="-d tmp/svnstat"/>
   	  <arg line="-begin 2006-05-05"/>
   	  <arg line="-end 9999-99-99"/>
@@ -107,8 +107,8 @@
       <zipfileset dir="examples" prefix="${distfilename}-${version}/examples" />
       <zipfileset dir="${javadoc}" prefix="${distfilename}-${version}/doc/api" />
       <zipfileset dir="doc" includes="README" prefix="${distfilename}-${version}"/>
-      <zipfileset  dir="${src.java}" includes="de/agentlab/svnstat/SvnStat.properties" fullpath="${distfilename}-${version}/examples/SvnStat.properties"/>
-      <zipfileset  dir="${src.java}" prefix="${distfilename}-${version}/src/java"/>
+      <zipfileset dir="${src.java}" includes="de/agentlab/svnstat/SvnStat.properties" fullpath="${distfilename}-${version}/examples/SvnStat.properties"/>
+      <zipfileset dir="${src.java}" prefix="${distfilename}-${version}/src/java"/>
       <zipfileset dir="." includes="build*" prefix="${distfilename}-${version}"/>
       <zipfileset dir="testdata" includes="test_svnlog.xml" prefix="${distfilename}-${version}/examples/svnlog" />
     </zip>
