@@ -505,10 +505,6 @@ public class Stat {
 
         long diff = maxValue - minValue;
 
-        // Avoid a org.jCharts.properties.PropertyException in Graph.lineChart when diff == 0.
-        if (diff == 0)
-            return false;
-
         try {
             String[] legendLabels = new String[] { Config.getProperty("FileCount.yLabel") };
 
@@ -526,7 +522,6 @@ public class Stat {
                 this.dir + "File_Count.jpg");
         } catch (Exception e) {
             e.printStackTrace();
-            return true;
         }
 
         return true;
