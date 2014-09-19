@@ -491,10 +491,7 @@ public class Stat {
         }
         int sum = base;
         int index = 0;
-        List<String> filteredDates = this.filterDates(from, to);
-        if (filteredDates.isEmpty())
-            return false;
-        for (Iterator<String> i = filteredDates.iterator(); i.hasNext();) {
+        for (Iterator<String> i = selectedDates.iterator(); i.hasNext();) {
             String date = i.next();
 
             sum += getFileCount(date);
